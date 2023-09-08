@@ -1,0 +1,17 @@
+alias c=chezmoi
+alias n=nvim
+alias v=nvim
+alias vim=nvim
+alias t=tmux
+alias h="htop -u ${USER}"
+
+alias ls="exa"
+alias la="exa -a"
+alias ll="exa -l"
+alias d="dirs -v"
+alias lal="exa -al"
+
+alias diff="colordiff -uNrw"
+alias zshconfig="nvim ~/.zshrc"
+alias nvim_config="n ~/.config/nvim/init.vim"
+alias grep="$(whence -p grep) --colour=auto $@"

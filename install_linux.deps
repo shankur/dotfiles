@@ -1,0 +1,110 @@
+#!/bin/env bash
+
+set -x
+
+CMAKE_VERSION=3.27.4
+TMUX_VERSION=3.3a
+RIPGREP_VERSION_HASH=af6b6c5
+
+PKG_MANAGERS=(yum apt pacman)
+read -rp "Which package manager should we use to install the packages (yum/apt/pacman)? " PKG_MGR
+which $PKG_MGR &>/dev/null
+if [[ $? -ne 0 ]]; then
+  echo "${PKG_MGR} not found."
+  exit 1
+fi
+
+case $PKG_MGR in
+  "yum")
+    ;&
+  "apt")
+    PKG_MGR="sudo ${PKG_MGR} -y"
+    ;;
+  "pacman")
+    PKG_MGR="yes | sudo ${PKG_MGR} -S"
+    ;;
+  *)
+    echo "Unknown package manager. Please choose one from ${PKG_MANAGERS}[@]".
+    exit 1
+esac
+
+echo "Using \`${PKG_MGR}\` to install the packages."
+
+# Check if the installed version of gcc is not too old
+if [[ `gcc -dumpversion` -lt 10 ]]; then
+  echo "Installed GCC version `gcc -dumpversion` is too old. Please install a newer version (> 10.0.0) to continue."
+  exit 1
+fi
+
+${PKG_MGR} install automake bison clangd curl gettext git golang g++-12 htop libevent-dev libssl-dev libncurses-dev \
+	ninja-build npm tree python3 python3-pip tree unzip wget zsh 1>/dev/null
+
+pip3 install numpy pandas virtualenv cmake-language-server
+
+# Change to zsh
+if [[ $SHELL != "/bin/zsh" ]]; then
+	chsh -s /bin/zsh
+fi
+
+# Install rustup
+which cargo &>/dev/null
+if [[ $? -ne 0 ]]; then
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	source "$HOME/.cargo/env"
+fi
+
+# Install cmake
+which cmake &>/dev/null
+if [[ $? -ne 0 ]]; then
+	wget https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz 1>/dev/null
+	rm -rf cmake-${CMAKE_VERSION} && tar xvf cmake-${CMAKE_VERSION}.tar.gz 1>/dev/null
+	rm -rf cmake-${CMAKE_VERSION}.tar.gz
+	cd cmake-${CMAKE_VERSION}
+	./bootstrap --parallel=8 1>/dev/null
+	make -j8 1>/dev/null
+	sudo make install 1>/dev/null
+	cd .. && rm -rf cmake-${CMAKE_VERSION}
+fi
+
+# Install TMUX
+which tmux &>/dev/null
+if [[ $? -ne 0 ]]; then
+	rm -rf tmux-build && git clone https://github.com/tmux/tmux.git tmux-build 1>/dev/null
+	cd tmux-build
+	git checkout tags/${TMUX_VERSION} 1>/dev/null
+	sh autogen.sh 1>/dev/null
+	./configure 1>/dev/null && make -j8 1>/dev/null
+	sudo make install 1>/dev/null
+	cd .. && rm -rf tmux-build
+fi
+
+
+# Install ripgrep
+which rg &>/dev/null
+if [[ $? -ne 0 ]]; then
+	rm -rf ripgrep && git clone https://github.com/BurntSushi/ripgrep &>/dev/null
+	cd ripgrep
+	git checkout af6b6c5
+	cargo build --release 1>/dev/null
+	sudo rm -rf /usr/local/bin/rg
+	sudo mv ./target/release/rg /usr/local/bin/
+	cd .. && rm -rf ripgrep
+fi
+
+# Install exa
+which exa &>/dev/null
+if [[ $? -ne 0 ]]; then
+	cargo install exa 1>/dev/null
+fi
+
+# Install NeoVIM
+which nvim &>/dev/null
+if [[ $? -ne 0 ]]; then
+	rm -rf neovim && git clone https://github.com/neovim/neovim.git
+	cd neovim && git checkout v0.9.2
+	make CMAKE_BUILD_TYPE=RelWithDebInfo 1>/dev/null
+	sudo make install 1>/dev/null
+	cd ..
+	rm -rf neovim
+fi
+
