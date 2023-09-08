@@ -1,3 +1,4 @@
 ./install.sh
 ./install_linux.deps
 ./install_osx.deps
+./README.md
