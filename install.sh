@@ -1,8 +1,10 @@
-#!/bin/env bash
+#!/bin/bash
 
 # Install base packages
 if [[ `uname` == "Linux" ]]; then
 	./install_linux.deps
+else
+	./install_osx.deps
 fi
 
 # Install zplug

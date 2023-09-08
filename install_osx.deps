@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -x
+
+RIPGREP_VERSION_HASH=af6b6c5
+
+
+brew install cmake curl exa git golang htop npm neovim ripgrep tmux tree python3 unzip wget zsh 1>/dev/null
+pip3 install numpy pandas virtualenv
+
+# Change to zsh
+if [[ $SHELL != "/bin/zsh" ]]; then
+	chsh -s /bin/zsh
+fi
+
+# Install rustup
+which cargo &>/dev/null
+if [[ $? -ne 0 ]]; then
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	source "$HOME/.cargo/env"
+fi
+

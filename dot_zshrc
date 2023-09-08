@@ -58,3 +58,5 @@ fi
 (( ! ${+functions[p10k]} )) || p10k finalize
 
 [[ ! -f ~/.zsh_alias ]] || source ~/.zsh_alias
+
+export PATH=$PATH:/opt/homebrew/bin

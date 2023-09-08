@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 
 set -x
 
@@ -37,7 +37,7 @@ if [[ `gcc -dumpversion` -lt 10 ]]; then
 fi
 
 ${PKG_MGR} install automake bison clangd curl gettext git golang g++-12 htop libevent-dev libssl-dev libncurses-dev \
-	ninja-build npm tree python3 python3-pip tree unzip wget zsh 1>/dev/null
+	ninja-build npm python3 python3-pip tree unzip wget zsh 1>/dev/null
 
 pip3 install numpy pandas virtualenv cmake-language-server
 
