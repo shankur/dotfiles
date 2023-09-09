@@ -13,6 +13,9 @@ fi
 rm -rf ~/.zplug
 curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 
+# Install oh-my-zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
 # Install chezmoi
 sh -c "$(curl -fsLS get.chezmoi.io)"
 sudo mv ./bin/chezmoi /usr/local/bin/ && rm -rf bin

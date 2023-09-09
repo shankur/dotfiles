@@ -39,10 +39,9 @@ bindkey "^a" beginning-of-line
 bindkey "^R" history-incremental-pattern-search-backward
 bindkey "^F" history-incremental-pattern-search-forward
 
-[ -f ${HOME}/.fzf.zsh ] && source ${HOME}/.fzf.zsh
-
 # To customize prompt, run `p10k configure` or edit ${HOME}/.p10k.zsh.
 [[ ! -f ${HOME}/.p10k.zsh ]] || source ${HOME}/.p10k.zsh
+(( ! ${+functions[p10k]} )) || p10k finalize
 
 # Utility that prints out lines that are common among $# files.
 intersect() {
